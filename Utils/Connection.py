@@ -33,8 +33,10 @@ class Bot(discord.Client):
         print(f'{self.user} has connected to Discord')
         guild = self.guilds[0]
         print(f'Connected to the guild {guild.name}')
-        for channel in guild.channels:
-            print(channel.name, channel.created_at)
+            
+    async def add_role(self, role_name: str) -> None:
+        guild = self.get_guild(self.get_guild_id())
+        new_role = await guild.create_role(name=role_name)
         
     def start_bot(self):
         self.run(self._TOKEN)
