@@ -31,12 +31,13 @@ class Bot(discord.Client):
             await self._tree.sync(guild = discord.Object(id = self._guild_id))
             self._synced = True
         print(f'{self.user} has connected to Discord')
-        guild = self.guilds[0]
-        print(f'Connected to the guild {guild.name}')
+        for guild in self.guilds:
+            if guild.id == self._guild_id:
+                print(f'Connected to the guild {guild.name}')
             
     async def add_role(self, role_name: str) -> None:
         guild = self.get_guild(self.get_guild_id())
-        new_role = await guild.create_role(name=role_name)
+        return await guild.create_role(name=role_name)
         
     def start_bot(self):
         self.run(self._TOKEN)
