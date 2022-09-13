@@ -45,7 +45,21 @@ class Bot(discord.Client):
             message = await self.get_guild(self._guild_id).get_channel_or_thread(self._roles_channel_id).fetch_message(reaction_event.message_id)
             # print(message.content, reaction_event.emoji, reaction_event.member.name)
             role = await self._grab_role_from_emoji(message, reaction_event.emoji)
-            await reaction_event.member.add_roles(role)
+            if role is not None:
+                await reaction_event.member.add_roles(role)
+            
+        except discord.NotFound:
+            return
+        
+    async def on_raw_reaction_remove(self, reaction_event: discord.RawReactionActionEvent):
+        try:
+            message = await self.get_guild(self._guild_id).get_channel_or_thread(self._roles_channel_id).fetch_message(reaction_event.message_id)
+            # print(message.content, reaction_event.emoji, reaction_event.member.name)
+            role = await self._grab_role_from_emoji(message, reaction_event.emoji)
+            
+            if role is not None:
+                member = await self.get_guild(self._guild_id).fetch_member(reaction_event.user_id)
+                await member.remove_roles(role)
             
         except discord.NotFound:
             return
@@ -55,7 +69,6 @@ class Bot(discord.Client):
         
         for role in roles:
             if role.name == role_name:
-                print("here")
                 return role
         
         

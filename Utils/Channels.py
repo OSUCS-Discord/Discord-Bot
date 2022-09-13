@@ -11,6 +11,8 @@ async def create_channels(interaction: discord.Interaction, name: str, new_role:
     channels = [name+'-resources', name+'-general']
     for channel in channels:
         await category_channel.create_text_channel(channel)
+        
+    return category_channel
     
     
 async def update_permissions(roles: discord.Role, channel: discord.CategoryChannel, new_role: discord.Role):

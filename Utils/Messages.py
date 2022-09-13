@@ -24,7 +24,7 @@ def get_next_emoji(messages: list[discord.Message]):
         
     return emoji.emojize(new_emoji["en"])[0]
 
-async def create_new_role_str(guild: discord.Guild, channel: discord.TextChannel, role: discord.Role):
+async def create_new_role_str(guild: discord.Guild, channel: discord.TextChannel, role: discord.Role, category: discord.CategoryChannel):
     messages = await get_messages(guild)
     new_emoji = get_next_emoji(messages)
     message = get_next_message_id(messages)
@@ -33,7 +33,7 @@ async def create_new_role_str(guild: discord.Guild, channel: discord.TextChannel
         message = await create_new_emoji_locations(channel, new_emoji, role)
     else:
         previous_message = message.content
-        await message.edit(content=f"{previous_message}\n{new_emoji} @{role.name}")
+        await message.edit(content=f"{previous_message}\n{new_emoji} @{role}")
     
     await message.add_reaction(new_emoji)
     
