@@ -33,7 +33,7 @@ async def create_new_role_str(guild: discord.Guild, channel: discord.TextChannel
         message = await create_new_emoji_locations(channel, new_emoji, role)
     else:
         previous_message = message.content
-        await message.edit(content=f"{previous_message}\n{new_emoji} @{role}")
+        await message.edit(content=f"{previous_message}\n{new_emoji} @{role.name}")
     
     await message.add_reaction(new_emoji)
     
@@ -53,5 +53,5 @@ def get_next_message_id(messages: list[discord.Message]):
 
 async def create_new_emoji_locations(channel: discord.TextChannel, emoji: str, role: discord.Role):
     # if there isn't space
-    return await channel.send(f"{emoji} @{role}")
+    return await channel.send(f"{emoji} @{role.name}")
 

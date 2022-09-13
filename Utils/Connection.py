@@ -4,18 +4,20 @@ import os
 import discord
 from discord import app_commands
 from dotenv import load_dotenv
+import emoji
 
 class Bot(discord.Client):
     global intents
     intents = discord.Intents.default()
     intents.message_content = True
     
-    def __init__(self, guild_id) -> None:
+    def __init__(self, guild_id: int, roles_channel_id: int) -> None:
         super().__init__(intents=intents)
         self._TOKEN = self._grab_token()
         self._synced = False
         self._guild_id = guild_id
         self._tree = app_commands.CommandTree(self)
+        self._roles_channel_id = roles_channel_id
         
     def _grab_token(self):
         # load in the .env variables for use ASK ALEX FOR TOKEN
@@ -37,6 +39,31 @@ class Bot(discord.Client):
         for guild in self.guilds:
             if guild.id == self._guild_id:
                 print(f'Connected to the guild {guild.name}')
+                
+    async def on_raw_reaction_add(self, reaction_event: discord.RawReactionActionEvent):
+        try:
+            message = await self.get_guild(self._guild_id).get_channel_or_thread(self._roles_channel_id).fetch_message(reaction_event.message_id)
+            # print(message.content, reaction_event.emoji, reaction_event.member.name)
+            role = await self._grab_role_from_emoji(message, reaction_event.emoji)
+            await reaction_event.member.add_roles(role)
+            
+        except discord.NotFound:
+            return
+        
+    async def _grab_role_from_name(self, role_name: str):
+        roles = await self.get_guild(self.get_guild_id()).fetch_roles()
+        
+        for role in roles:
+            if role.name == role_name:
+                print("here")
+                return role
+        
+        
+    async def _grab_role_from_emoji(self, messages: discord.Message, current_emoji: str):
+        for message in messages.content.splitlines():
+            message = message.split()
+            if message[0] == emoji.emojize(current_emoji.name):
+                return await self._grab_role_from_name(message[1][1:])
             
     async def add_role(self, role_name: str) -> None:
         guild = self.get_guild(self.get_guild_id())
