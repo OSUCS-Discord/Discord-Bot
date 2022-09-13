@@ -1,10 +1,13 @@
 # Main bot code
-from Utils.Connection import Bot
 import discord
+import random
+
+from Utils.Connection import Bot
 from Utils.Authorization import check_admin
 from Utils.Channels import create_channels
+from Utils.Messages import create_new_role_str
 
-
+    
 def main():
     # change for testing OSU: 825889370636681227
     guild_id = 1018973191928025188
@@ -20,6 +23,16 @@ def main():
             new_role = await client.add_role(name)
             await create_channels(interaction, name, new_role)
             await interaction.response.send_message(f'New role created: {name}!')
+        else:
+            await interaction.response.send_message("You do not have authorization for this command")
+            
+    @tree.command(name = "read_messages", description="Testing purposes only", guild= discord.Object(id = client.get_guild_id()))
+    async def messages(interaction: discord.Interaction, name: str):
+        if check_admin(interaction.user):
+            role = random.randint(100,499)
+            channel = 1019066618376101888
+            await create_new_role_str(interaction.guild, interaction.guild.get_channel(channel), role)
+            await interaction.response.send_message("read messages")
         else:
             await interaction.response.send_message("You do not have authorization for this command")
     

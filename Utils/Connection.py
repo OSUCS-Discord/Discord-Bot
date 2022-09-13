@@ -6,9 +6,12 @@ from discord import app_commands
 from dotenv import load_dotenv
 
 class Bot(discord.Client):
-        
+    global intents
+    intents = discord.Intents.default()
+    intents.message_content = True
+    
     def __init__(self, guild_id) -> None:
-        super().__init__(intents=discord.Intents.default())
+        super().__init__(intents=intents)
         self._TOKEN = self._grab_token()
         self._synced = False
         self._guild_id = guild_id
